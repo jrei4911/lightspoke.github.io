@@ -130,7 +130,7 @@ function _yqlProxyAjaxRequest3(url, successCallback){
 // try jsonP as a final approach?
 function _jsonpAjax4(url, successCallback){
   var xhr = $.ajax({ 
-    url: url + "?callback=?",
+    url: url //+ "?callback=?",
     dataType: 'jsonp',
     success: successCallback,
     error: function()
