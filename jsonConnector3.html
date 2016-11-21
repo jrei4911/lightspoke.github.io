@@ -132,6 +132,7 @@ function _jsonpAjax4(url, successCallback){
   var xhr = $.ajax({ 
     url: url + "?callback=?",
     dataType: 'jsonp',
+    type: 'POST',
     success: successCallback,
     error: function()
     {
