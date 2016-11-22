@@ -105,13 +105,13 @@ function _basicAjaxRequest1(url, successCallback){
 
 // try to use cors.io as a proxy
 function _corsioProxyAjaxRequest2(url, successCallback){
-  var corsUrl = "http://cors.io/?u=" + url;
+  var corsUrl = "https://cors.io/?u=" + url;
   _ajaxRequestHelper(url, successCallback, corsUrl, _yqlProxyAjaxRequest3);
 }
 
 // try to use yql as a proxy
 function _yqlProxyAjaxRequest3(url, successCallback){
-  var yqlQueryBase = "http://query.yahooapis.com/v1/public/yql?q=";
+  var yqlQueryBase = "https://query.yahooapis.com/v1/public/yql?q=";
   var query = "select * from html where url='" + url + "'";
   var restOfQueryString = "&format=json";
   var yqlUrl = yqlQueryBase + encodeURIComponent(query) + restOfQueryString;
