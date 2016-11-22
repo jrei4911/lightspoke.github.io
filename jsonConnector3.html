@@ -92,7 +92,7 @@ function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialS
     success: specialSuccessCallback,
     error: function()
     {
-      _giveUpOnUrl9(url, successCallback);
+      nextFunction(url, successCallback);
       //nextFunction(url, successCallback);
     }
   });
