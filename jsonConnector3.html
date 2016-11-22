@@ -77,13 +77,14 @@ function _retrieveJsonData(retrieveDataCallback) {
 
 function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialSuccessCallback){
   specialSuccessCallback = specialSuccessCallback || successCallback;
-  //var email = 'hireinternational@lightspoke.com';
-  //var password = 'Rgpteam9619';
   var xhr = $.ajax({ 
     
     type: "GET",
-    url: conUrl, //+ "?doc=6505884" 
-    //contentType: "application/json; charset=utf-8",
+    url: conUrl;
+    //contentType: "application/
+   
+   
+    charset=utf-8",
     dataType: 'jsonp',
     
     //async: false,
@@ -115,7 +116,7 @@ function _corsioProxyAjaxRequest2(url, successCallback){
 function _yqlProxyAjaxRequest3(url, successCallback){
   var yqlQueryBase = "http://query.yahooapis.com/v1/public/yql?q=";
   var query = "select * from html where url='" + url + "'";
-  var restOfQueryString = "&format=json";
+  var restOfQueryString = "&format=jsonp";
   var yqlUrl = yqlQueryBase + encodeURIComponent(query) + restOfQueryString;
   var specialSuccessCallback = function(data) {
     if (data.query.count == 0) {
