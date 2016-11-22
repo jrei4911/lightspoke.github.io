@@ -116,7 +116,7 @@ function _corsioProxyAjaxRequest2(url, successCallback){
 function _yqlProxyAjaxRequest3(url, successCallback){
   var yqlQueryBase = "http://query.yahooapis.com/v1/public/yql?q=";
   var query = "select * from html where url='" + url + "'";
-  var restOfQueryString = "&format=jsonp";
+  var restOfQueryString = "&format=json";
   var yqlUrl = yqlQueryBase + encodeURIComponent(query) + restOfQueryString;
   var specialSuccessCallback = function(data) {
     if (data.query.count == 0) {
