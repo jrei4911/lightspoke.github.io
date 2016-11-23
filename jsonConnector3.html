@@ -107,7 +107,7 @@ function _basicAjaxRequest1(url, successCallback){
 
 // try to use cors.io as a proxy
 function _corsioProxyAjaxRequest2(url, successCallback){
-  var corsUrl = "https://cors.io/?u=" + url;
+  var corsUrl = "https://cors.io/?" + url;
   _ajaxRequestHelper(url, successCallback, corsUrl, _yqlProxyAjaxRequest3);
 }
 
