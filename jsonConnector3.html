@@ -81,6 +81,7 @@ function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialS
     
     type: "GET",
     url: conUrl,
+    crossdomain: true,  
     contentType: "application/json; charset=utf-8",
     dataType: 'jsonp',
     
@@ -94,7 +95,8 @@ function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialS
     {
       nextFunction(url, successCallback);
       //nextFunction(url, successCallback);
-    }
+    },
+   beforeSend: setHeader
   });
 }
 
