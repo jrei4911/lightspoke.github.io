@@ -78,6 +78,19 @@ function _retrieveJsonData(retrieveDataCallback) {
 
 function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialSuccessCallback){
   specialSuccessCallback = specialSuccessCallback || successCallback;
+ 
+  $.ajax({ 
+				type: 'GET',
+				url: 'http://cors.io/?'+url ,
+				dataType: 'json', 
+				success: specialSuccessCallback,
+				error: function()
+				{
+				  _giveUpOnUrl9(url, successCallback);
+				  //nextFunction(url, successCallback);
+				}
+				});
+ /*
   var xhr = $.ajax({ 
     
     type: "GET",
@@ -97,6 +110,7 @@ function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialS
       //nextFunction(url, successCallback);
     }
   });
+  */
 }
 
 // try the straightforward request
