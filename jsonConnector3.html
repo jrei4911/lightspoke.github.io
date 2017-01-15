@@ -46,22 +46,18 @@ function _retrieveJsonData(retrieveDataCallback) {
     var conData = JSON.parse(tableau.connectionData);
     var jsonString = conData.jsonString;
     if (conData.jsonUrl) {
-      var successCallback = function(data) 
-      {
-        window.cachedTableData = _jsToTable(data);
-        retrieveDataCallback(window.cachedTableData);
-      };
-      // Go get the json data
-      // This is the first, and most basic, of many attempts to get the data.
-      // We make different attempts that use different approaches, because if
-      // the server we are requesting data from has not enabled CORS, then the
-      // request will fail. In that case we try different proxies to try to get
-      // around the same origin policy. This is not as clean as it could be, but 
-      // for a general purpose connector, we want to make every attempt we can
-      // to pull in the data
-      //_basicAjaxRequest1(conData.jsonUrl, successCallback);
-      _retrieveJsonData2(conData.jsonUrl, successCallback);
-     //_corsioProxyAjaxRequest2(conData.jsonUrl, successCallback);
+      var conUrl = _buildConnectionUrl(conData.jsonUrl);
+      // handle the json data from the remote source.     
+      var xhr = $.ajax({
+        url: conUrl,
+  crossDomain: true,
+        dataType: 'jsonp',
+        success: function(data)
+        {
+          window.cachedTableData = _jsToTable(data);
+          retrieveDataCallback(window.cachedTableData);
+        }
+      });
       return;
     }
     try {
@@ -136,27 +132,7 @@ function _yqlProxyAjaxRequest3(url, successCallback){
     } else {
       successCallback(data);
     }
-  }
-  _ajaxRequestHelper(url, successCallback, yqlUrl, _jsonpAjax4, specialSuccessCallback);
-}
 
-// try jsonP as a final approach?
-function _jsonpAjax4(url, successCallback){
-  var xhr = $.ajax({ 
-    url: url + "?callback=?",
-    dataType: 'jsonp',
-    type: 'POST',
-    success: successCallback,
-    error: function()
-    {
-      _giveUpOnUrl9(url, successCallback);
-    }
-  });
-}
-
-function _giveUpOnUrl9(url, successCallback) {
-  tableau.abortWithError("Could not load url: " + url);
-}
 
 // Takes a hierarchical javascript object and tries to turn it into a table
 // Returns an object with headers and the row level data
