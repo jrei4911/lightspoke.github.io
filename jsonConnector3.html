@@ -1,3 +1,4 @@
+
 <html>
 <head>
 <title>json Connector</title>
@@ -58,7 +59,8 @@ function _retrieveJsonData(retrieveDataCallback) {
       // around the same origin policy. This is not as clean as it could be, but 
       // for a general purpose connector, we want to make every attempt we can
       // to pull in the data
-      _basicAjaxRequest1(conData.jsonUrl, successCallback);
+      //_basicAjaxRequest1(conData.jsonUrl, successCallback);
+      _retrieveJsonData2(conData.jsonUrl, successCallback);
      //_corsioProxyAjaxRequest2(conData.jsonUrl, successCallback);
       return;
     }
@@ -76,6 +78,24 @@ function _retrieveJsonData(retrieveDataCallback) {
 // There are a lot of ways to handle URLS. Sometimes we'll need workarounds for CORS. These
 // methods chain together a series of attempts to get the data at the given url
 
+
+
+function _retrieveJsonData2(url, successCallback, conUrl, nextFunction, specialSuccessCallback){
+  specialSuccessCallback = specialSuccessCallback || successCallback;
+      .ajax({
+        url: conUrl,
+        crossDomain: true,
+        dataType: 'jsonp',
+				type: 'GET',
+				success: specialSuccessCallback,
+				error: function()
+				{
+				  _giveUpOnUrl9(url, successCallback);
+				}
+				});
+
+}
+
 function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialSuccessCallback){
   specialSuccessCallback = specialSuccessCallback || successCallback;
  
@@ -90,27 +110,7 @@ function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialS
 				  //nextFunction(url, successCallback);
 				}
 				});
- /*
-  var xhr = $.ajax({ 
-    
-    type: "GET",
-    url: conUrl,
-   contentType: "application/json; charset=utf-8",
-    dataType: 'jsonp',
-    
-    //async: false,
-    //headers: {
-    //"Authorization": "Basic " + btoa(email + ":" + password)
-    //},
-    data: {},
-    success: specialSuccessCallback,
-    error: function()
-    {
-      nextFunction(url, successCallback);
-      //nextFunction(url, successCallback);
-    }
-  });
-  */
+
 }
 
 // try the straightforward request
