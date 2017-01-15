@@ -72,7 +72,7 @@ function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialS
   specialSuccessCallback = specialSuccessCallback || successCallback;
   $.ajax({
 				type: 'GET',
-				url: 'http://whateverorigin.org/get?url=' + encodeURIComponent(url) ,
+				url: 'https://whateverorigin.org/get?url=' + encodeURIComponent(url) ,
 				dataType: 'json',
 				success: specialSuccessCallback,
 				error: function()
