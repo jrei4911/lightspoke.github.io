@@ -52,8 +52,9 @@ function _retrieveJsonData(retrieveDataCallback) {
       // around the same origin policy. This is not as clean as it could be, but
       // for a general purpose connector, we want to make every attempt we can
       // to pull in the data
-      _basicAjaxRequest1(conData.jsonUrl, successCallback);
+     // _basicAjaxRequest1(conData.jsonUrl, successCallback);
      //_corsioProxyAjaxRequest2(conData.jsonUrl, successCallback);
+   _yqlProxyAjaxRequest3(conData.jsonUrl, successCallback);
       return;
     }
     try {
