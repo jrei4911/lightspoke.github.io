@@ -58,8 +58,7 @@ function _retrieveJsonData(retrieveDataCallback) {
       // around the same origin policy. This is not as clean as it could be, but 
       // for a general purpose connector, we want to make every attempt we can
       // to pull in the data
-	  
-      _yqlProxyAjaxRequest3(conData.jsonUrl, successCallback);
+     _yqlProxyAjaxRequest3(conData.jsonUrl, successCallback);
       return;
     }
     try {
@@ -78,15 +77,19 @@ function _retrieveJsonData(retrieveDataCallback) {
 
 function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialSuccessCallback){
   specialSuccessCallback = specialSuccessCallback || successCallback;
-  var xhr = $.ajax({ 
-    url: conUrl, 
-    dataType: 'json', 
-    success: specialSuccessCallback,
-    error: function()
-    {
-      nextFunction(url, successCallback);
-    }
-  });
+ 
+  $.ajax({ 
+				type: 'GET',
+				url: 'http://13.70.48.41/?'+url ,
+				dataType: 'json', 
+				success: specialSuccessCallback,
+				error: function()
+				{
+				  _giveUpOnUrl9(url, successCallback);
+				  //nextFunction(url, successCallback);
+				}
+				});
+
 }
 
 // try the straightforward request
@@ -96,19 +99,19 @@ function _basicAjaxRequest1(url, successCallback){
 
 // try to use cors.io as a proxy
 function _corsioProxyAjaxRequest2(url, successCallback){
-  var corsUrl = "http://cors.io/?u=" + url;
+  var corsUrl = "https://cors.io/?" + url;
   _ajaxRequestHelper(url, successCallback, corsUrl, _yqlProxyAjaxRequest3);
 }
 
 // try to use yql as a proxy
 function _yqlProxyAjaxRequest3(url, successCallback){
-  var yqlQueryBase = "http://query.yahooapis.com/v1/public/yql?q=";
+  var yqlQueryBase = "https://query.yahooapis.com/v1/public/yql?q=";
   var query = "select * from html where url='" + url + "'";
   var restOfQueryString = "&format=json";
   var yqlUrl = yqlQueryBase + encodeURIComponent(query) + restOfQueryString;
   var specialSuccessCallback = function(data) {
     if (data.query.count == 0) {
-      _jsonpAjax4(url, successCallback);
+      _giveUpOnUrl9(url, successCallback);
     } else {
       successCallback(data);
     }
@@ -121,6 +124,7 @@ function _jsonpAjax4(url, successCallback){
   var xhr = $.ajax({ 
     url: url + "?callback=?",
     dataType: 'jsonp',
+    type: 'POST',
     success: successCallback,
     error: function()
     {
@@ -303,3 +307,4 @@ $(document).ready(function(){
 
 </body>
 </html>
+
