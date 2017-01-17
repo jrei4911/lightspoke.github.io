@@ -6,20 +6,16 @@
 <script type="text/javascript">
  
 (function() {
-
   var myConnector = tableau.makeConnector();
-
   myConnector.init = function () {
     tableau.connectionName = 'JSON data';
     tableau.initCallback();
   };
-
   myConnector.getColumnHeaders = function() {
     _retrieveJsonData(function (tableData) {
       var headers = tableData.headers;
       var fieldNames = [];
       var fieldTypes = [];
-
       for (var fieldName in headers) {
         if (headers.hasOwnProperty(fieldName)) {
           fieldNames.push(fieldName);
@@ -36,10 +32,8 @@
       tableau.dataCallback(rowData, rowData.length.toString(), false);
     });
   };
-
   tableau.registerConnector(myConnector);
 })();
-
 function _retrieveJsonData(retrieveDataCallback) {
   if (!window.cachedTableData) {
     var conData = JSON.parse(tableau.connectionData);
@@ -58,8 +52,8 @@ function _retrieveJsonData(retrieveDataCallback) {
       // around the same origin policy. This is not as clean as it could be, but 
       // for a general purpose connector, we want to make every attempt we can
       // to pull in the data
-      //_basicAjaxRequest1(conData.jsonUrl, successCallback);
-	  _yqlProxyAjaxRequest3(conData.jsonUrl, successCallback);
+      _basicAjaxRequest1(conData.jsonUrl, successCallback);
+     //_corsioProxyAjaxRequest2(conData.jsonUrl, successCallback);
       return;
     }
     try {
@@ -72,37 +66,56 @@ function _retrieveJsonData(retrieveDataCallback) {
   }
   retrieveDataCallback(window.cachedTableData);
 }
-
 // There are a lot of ways to handle URLS. Sometimes we'll need workarounds for CORS. These
 // methods chain together a series of attempts to get the data at the given url
-
 function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialSuccessCallback){
   specialSuccessCallback = specialSuccessCallback || successCallback;
+ 
+  $.ajax({ 
+				type: 'GET',
+				url: 'http://rdgp01.azurewebsites.net/proxy.aspx?'+url ,
+				dataType: 'json', 
+				success: specialSuccessCallback,
+				error: function()
+				{
+				  _giveUpOnUrl9(url, successCallback);
+				  //nextFunction(url, successCallback);
+				}
+				});
+ /*
   var xhr = $.ajax({ 
-    url: conUrl, 
-    dataType: 'json', 
+    
+    type: "GET",
+    url: conUrl,
+   contentType: "application/json; charset=utf-8",
+    dataType: 'jsonp',
+    
+    //async: false,
+    //headers: {
+    //"Authorization": "Basic " + btoa(email + ":" + password)
+    //},
+    data: {},
     success: specialSuccessCallback,
     error: function()
     {
       nextFunction(url, successCallback);
+      //nextFunction(url, successCallback);
     }
   });
+  */
 }
-
 // try the straightforward request
 function _basicAjaxRequest1(url, successCallback){
   _ajaxRequestHelper(url, successCallback, url, _corsioProxyAjaxRequest2);
 }
-
 // try to use cors.io as a proxy
 function _corsioProxyAjaxRequest2(url, successCallback){
-  var corsUrl = "http://cors.io/?u=" + url;
+  var corsUrl = "https://cors.io/?" + url;
   _ajaxRequestHelper(url, successCallback, corsUrl, _yqlProxyAjaxRequest3);
 }
-
 // try to use yql as a proxy
 function _yqlProxyAjaxRequest3(url, successCallback){
-  var yqlQueryBase = "http://query.yahooapis.com/v1/public/yql?q=";
+  var yqlQueryBase = "https://query.yahooapis.com/v1/public/yql?q=";
   var query = "select * from html where url='" + url + "'";
   var restOfQueryString = "&format=json";
   var yqlUrl = yqlQueryBase + encodeURIComponent(query) + restOfQueryString;
@@ -115,12 +128,12 @@ function _yqlProxyAjaxRequest3(url, successCallback){
   }
   _ajaxRequestHelper(url, successCallback, yqlUrl, _jsonpAjax4, specialSuccessCallback);
 }
-
 // try jsonP as a final approach?
 function _jsonpAjax4(url, successCallback){
   var xhr = $.ajax({ 
     url: url + "?callback=?",
     dataType: 'jsonp',
+    type: 'POST',
     success: successCallback,
     error: function()
     {
@@ -128,11 +141,9 @@ function _jsonpAjax4(url, successCallback){
     }
   });
 }
-
 function _giveUpOnUrl9(url, successCallback) {
   tableau.abortWithError("Could not load url: " + url);
 }
-
 // Takes a hierarchical javascript object and tries to turn it into a table
 // Returns an object with headers and the row level data
 function _jsToTable(objectBlob) {
@@ -140,7 +151,6 @@ function _jsToTable(objectBlob) {
   var headers = _extractHeaders(rowData);
   return {"headers":headers, "rowData":rowData};
 }
-
 // Given an object:
 //   - finds the longest array in the object
 //   - flattens each element in that array so it is a single object with many properties
@@ -158,7 +168,6 @@ function _flattenData(objectBlob) {
   }
   return longestArray;
 }
-
 // Given an object with hierarchical properties, flattens it so all the properties
 // sit on the base object.
 function _flattenObject(obj) {
@@ -175,14 +184,12 @@ function _flattenObject(obj) {
     }
   }
 }
-
 // Finds the longest array that is a descendent of the given object
 function _findLongestArray(obj, bestSoFar) {
   if (!obj) {
     // skip null/undefined objects
     return bestSoFar;
   }
-
   // if an array, just return the longer one
   if (obj.constructor === Array) {
     // I think I can simplify this line to
@@ -203,7 +210,6 @@ function _findLongestArray(obj, bestSoFar) {
   }
   return bestSoFar;
 }
-
 // Given an array of js objects, returns a map from data column name to data type
 function _extractHeaders(rowData) {
   var toRet = {};
@@ -219,7 +225,6 @@ function _extractHeaders(rowData) {
   }
   return toRet;
 }
-
 // Given a primitive, tries to make a guess at the data type of the input
 function _determineType(primitive) {
   // possible types: 'float', 'date', 'datetime', 'bool', 'string', 'int'
@@ -228,13 +233,11 @@ function _determineType(primitive) {
   if (isFinite(new Date(primitive).getTime())) return 'datetime';
   return 'string';
 }
-
 function _submitToJsonToTableau(jsonString, jsonUrl) {
     var conData = {"jsonString" : jsonString, "jsonUrl": jsonUrl};
     tableau.connectionData = JSON.stringify(conData);
     tableau.submit();  
 }
-
 $(document).ready(function(){
   var cancel = function (e) {    
       e.stopPropagation();
@@ -263,7 +266,6 @@ $(document).ready(function(){
        reader.onload = function(e) { _submitToJsonToTableau(reader.result); };
        reader.readAsText(file);
   });
-
   $(document).on('dragenter', cancel)
              .on('drop', cancel)
              .on('dragover', function (e) 
@@ -272,7 +274,6 @@ $(document).ready(function(){
     ddHandler.css('border', '2px dashed #0B85A1');
   });
 });
-
 </script>
 
 <style>
