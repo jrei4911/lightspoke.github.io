@@ -73,7 +73,7 @@ function _ajaxRequestHelper(url, successCallback, conUrl, nextFunction, specialS
  
   $.ajax({ 
 				type: 'GET',
-				url: 'http://rdgp01.azurewebsites.net/proxy.aspx?'+url ,
+				url: 'https://rdgp01.azurewebsites.net/proxy.aspx?'+url ,
 				dataType: 'json', 
 				success: specialSuccessCallback,
 				error: function()
