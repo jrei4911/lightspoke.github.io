@@ -19,7 +19,7 @@
       for (var fieldName in headers) {
         if (headers.hasOwnProperty(fieldName)) {
           fieldNames.push(fieldName);
-		if(fieldName == "Proposed Off Hire")
+		if(fieldName == "Proposed Off Hire" || fieldName == "Actual On Hire" || fieldName == "Actual Off Hire")
 		{
 			 fieldTypes.push("string");
 		}else{
