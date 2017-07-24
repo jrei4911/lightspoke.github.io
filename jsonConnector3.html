@@ -19,8 +19,12 @@
       for (var fieldName in headers) {
         if (headers.hasOwnProperty(fieldName)) {
           fieldNames.push(fieldName);
-          fieldTypes.push(headers[fieldName]);
-	  alert(headers[fieldName]);
+		if(fieldName == "Proposed Off Hire")
+		{
+			 fieldTypes.push("string");
+		}else{
+          		fieldTypes.push(headers[fieldName]);
+		}
         }
       }
       tableau.headersCallback(fieldNames, fieldTypes); // tell tableau about the fields and their types
